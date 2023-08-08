@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 
-from men.models import Men
+from men.models import Men, Category
 
 
 # main page
@@ -17,8 +17,15 @@ def men(request):
     return render(request, 'men/men.html', {'title': 'men', 'mens': mens})
 
 
+def categories_mens(request):
+    categories = Category.objects.all()
+    return render(request, 'men/categories_mens.html', {'title': 'categories_mens', 'categories': categories})
+
+
 def one_men(request, men_id):
-    return render(request, 'men/one_men.html', {'title': 'one_men', 'id': men_id})
+    men = Men.objects.filter(pk=men_id)
+    print(men)
+    return render(request, 'men/one_men.html', {'title': 'one_men', 'men': men})
 
 
 def about(request):

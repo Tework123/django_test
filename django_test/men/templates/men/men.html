@@ -1,6 +1,11 @@
 {% extends 'men/base.html' %}
 {% block content %}
+<br>
+<p><a href="{% url 'categories_mens' %}">categories_mens</a></p>
+<br>
+
 {% for i in mens %}
 <p><a href="{% url 'one_men' i.pk %}">{{ i }}</a></p>
 {% endfor %}
+
 {% endblock %}
