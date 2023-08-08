@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <link type="text/css" href="{% static 'men/css/styles.css' %}" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="{% static 'men/images/main.ico' %}" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+{% block menu %}
+<p><a href="{% url 'men' %}">men</a></p>
+<p><a href="{% url 'women' %}">women</a></p>
+<p><a href="{% url 'authentication' %}">authentication</a></p>
+
+<h1>Страница {{ title }}</h1>
+
+{% endblock menu %}
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>

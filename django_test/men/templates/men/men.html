@@ -1,0 +1,6 @@
+{% extends 'men/base.html' %}
+{% block content %}
+{% for i in mens %}
+<p><a href="{% url 'one_men' i.pk %}">{{ i }}</a></p>
+{% endfor %}
+{% endblock %}
