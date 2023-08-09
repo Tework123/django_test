@@ -1,9 +1,8 @@
 {% extends 'men/base.html' %}
 {% block content %}
-{% for i in men %}
-{{ i }}
-<p><img src="{{i.photo.url}}"></p>
 
-{% endfor %}
+{{ men.title }}
+{% if men.photo %}
 <p><img src="{{men.photo.url}}"></p>
+{% endif %}
 {% endblock %}

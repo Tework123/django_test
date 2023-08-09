@@ -2,9 +2,10 @@
 {% block content %}
 <br>
 <p><a href="{% url 'categories_mens' %}">categories_mens</a></p>
+<p><a href="{% url 'add_page' %}">add_page</a></p>
 <br>
 
-{% for i in mens %}
+{% for i in object_list %}
 <p><a href="{% url 'one_men' i.pk %}">{{ i }}</a></p>
 {% endfor %}
 
