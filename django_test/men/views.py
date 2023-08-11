@@ -1,10 +1,12 @@
+from django.contrib.postgres.aggregates import StringAgg
+from django.db.models.functions import Concat, Cast
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 
 from men.forms import AddMen
-from men.models import Men, Category
+from men.models import Men, Category, Message
 
 
 # main page
@@ -66,10 +68,28 @@ class OneMenPage(DetailView):
 #     print(men)
 #     return render(request, 'men/one_men.html', {'title': 'one_men', 'men': men})
 
+from django.db.models import Q, Count, Max, Min, CharField, F
+
 
 def about(request):
-    mens = Men.objects.all()
-    return render(request, 'men/main.html', {'title': 'about', 'mens': mens})
+    mens = Message.objects.get(pk=1)
+    print(mens.text)
+    mens.text += '123'
+    mens.save()
+
+    print(mens)
+    return render(request, 'men/about.html', {'title': 'about', 'mens': mens})
+
+
+def message(request):
+    messages = Message.objects.annotate(('men_id'))
+    return render(request, 'men/one_men.html', {'title': 'message', 'messages': messages})
+
+
+def get_whole_message_men(request, men_id):
+    men = Men.objects.filter(pk=men_id).first()
+    messages = Message.objects.filter(men=men_id)
+    return render(request, 'men/one_men.html', {'title': 'message', 'messages': messages, 'men': men})
 
 
 class AddPage(CreateView):

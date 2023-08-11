@@ -23,7 +23,7 @@ class Men(models.Model):
         verbose_name = 'Известные мужчинки'
         verbose_name_plural = 'Известные мужчинки'
 
-        ordering = ['title', 'content']
+        # ordering = ['title', 'content']
 
 
 class Category(models.Model):
@@ -38,3 +38,12 @@ class Category(models.Model):
         verbose_name_plural = 'Категории'
 
         ordering = ['id']
+
+
+# у чела много сообщений
+class Message(models.Model):
+    text = models.CharField(max_length=300)
+    men = models.ForeignKey('Men', on_delete=models.PROTECT, null=True)
+
+    def __str__(self):
+        return self.text

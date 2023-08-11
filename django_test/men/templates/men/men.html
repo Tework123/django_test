@@ -3,10 +3,14 @@
 <br>
 <p><a href="{% url 'categories_mens' %}">categories_mens</a></p>
 <p><a href="{% url 'add_page' %}">add_page</a></p>
+<p><a href="{% url 'about' %}">about</a></p>
+<p><a href="{% url 'message' %}">message</a></p>
+
+
 <br>
 
 {% for i in object_list %}
-<p><a href="{% url 'one_men' i.pk %}">{{ i }}</a></p>
+<p><a href="{% url 'get_whole_message_men' i.pk %}">{{ i }}</a></p>
 {% endfor %}
 
 {% endblock %}
