@@ -1,9 +1,10 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from .views import about, contact, categories_mens, MenPage, OneMenPage, AddPage, message, get_whole_message_men
 
 urlpatterns = [
-    path('', MenPage.as_view(), name='men'),
+    path('', cache_page(60)(MenPage.as_view()), name='men'),
     # path('<int:men_id>/', OneMenPage.as_view(), name='one_men'),
     path('add_page/', AddPage.as_view(), name='add_page'),
     # path('<int:men_id>/', one_men, name='one_men'),

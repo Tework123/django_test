@@ -29,16 +29,17 @@ class MenPage(DataMixin, ListView):
     # передает только неизменяемые данные
     # extra_context = {'title': 'Men'}
 
-    # для динамического контекста надо вот так делать:
+    # для динамического контекста надо вот так делать, сюда и датамиксин входит:
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title='Men')
         context = dict(list(context.items()) + list(c_def.items()))
-        print(context)
         return context
 
+    # метод переопределяет стандартный sql запрос модели, related делает жадный запрос, то есть сразу
+    # достаются все категории, тупо join
     def get_queryset(self):
-        return Men.objects.filter(is_published=True)
+        return Men.objects.filter(is_published=True).select_related('category')
 
 
 def categories_mens(request):
@@ -63,7 +64,6 @@ class OneMenPage(DetailView):
 def about(request):
     mens = Men.objects.raw('SELECT id, title FROM men_men')
 
-    print(mens)
     return render(request, 'men/about.html', {'title': 'about', 'mens': mens})
 
 

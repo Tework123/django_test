@@ -1,4 +1,10 @@
 {% extends 'men/base.html' %}
 {% block content %}
-
+<p>Здесь авторизация</p>
+<form action="{% url 'login' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Войти в аккаунт</button>
+    <div class="form-error">{{form.errors}}</div>
+</form>
 {% endblock %}

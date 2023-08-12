@@ -14,6 +14,7 @@
 
 {% for i in object_list %}
 <p><a href="{% url 'get_whole_message_men' i.pk %}">{{ i }}</a></p>
+<p>{{i.category }}</p>
 {% endfor %}
 
 <ul>

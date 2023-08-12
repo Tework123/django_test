@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'men.apps.MenConfig',
     'women.apps.WomenConfig',
     'authentication.apps.AuthenticationConfig'
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware"
 ]
 
 ROOT_URLCONF = 'django_test.urls'
@@ -69,6 +71,18 @@ TEMPLATES = [
         },
     },
 ]
+
+# кеширование мемкешед
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+
+        # врубаем мемкешед
+        "LOCATION": "127.0.0.1:11211",
+
+        # "LOCATION": os.path.join(BASE_DIR, 'cache'),
+    }
+}
 
 WSGI_APPLICATION = 'django_test.wsgi.application'
 
@@ -105,6 +119,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -131,3 +151,5 @@ STATICFILES_DIRS = []
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = 'media/'
+
+LOGIN_REDIRECT_URL = '/men'

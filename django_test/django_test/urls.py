@@ -12,10 +12,10 @@ urlpatterns = [
     path('authentication/', include('authentication.urls')),
     path('men/', include('men.urls')),
     path('women/', include('women.urls')),
+    path("__debug__/", include("debug_toolbar.urls"))
 
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = pageNotFound
