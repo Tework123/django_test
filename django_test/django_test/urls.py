@@ -9,7 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main, name='main'),
     # path('men/<int:men_id>/', include('men.urls')),
-    path('authentication', include('authentication.urls')),
+    path('authentication/', include('authentication.urls')),
     path('men/', include('men.urls')),
     path('women/', include('women.urls')),
 

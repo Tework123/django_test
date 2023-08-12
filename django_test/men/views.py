@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models.functions import Concat, Cast
 from django.http import HttpResponse, HttpResponseNotFound
@@ -7,6 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView
 
 from men.forms import AddMen
 from men.models import Men, Category, Message
+from men.utils import DataMixin
 
 
 # main page
@@ -16,7 +18,8 @@ def main(request):
     return render(request, 'men/main.html', context)
 
 
-class MenPage(ListView):
+class MenPage(DataMixin, ListView):
+    paginate_by = 3
     model = Men
     template_name = 'men/men.html'
     context_object_name = 'object_list'
@@ -29,18 +32,13 @@ class MenPage(ListView):
     # для динамического контекста надо вот так делать:
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['hui'] = '2222222222222222'
-        context['title'] = 'Men'
+        c_def = self.get_user_context(title='Men')
+        context = dict(list(context.items()) + list(c_def.items()))
+        print(context)
         return context
 
     def get_queryset(self):
         return Men.objects.filter(is_published=True)
-
-
-# def men(request):
-#     mens = Men.objects.all()
-#
-#     return render(request, 'men/men.html', {'title': 'men', 'mens': mens})
 
 
 def categories_mens(request):
@@ -62,20 +60,8 @@ class OneMenPage(DetailView):
         return context
 
 
-# def one_men(request, men_id):
-#     print(men_id)
-#     men = Men.objects.filter(id=men_id)
-#     print(men)
-#     return render(request, 'men/one_men.html', {'title': 'one_men', 'men': men})
-
-from django.db.models import Q, Count, Max, Min, CharField, F
-
-
 def about(request):
-    mens = Message.objects.get(pk=1)
-    print(mens.text)
-    mens.text += '123'
-    mens.save()
+    mens = Men.objects.raw('SELECT id, title FROM men_men')
 
     print(mens)
     return render(request, 'men/about.html', {'title': 'about', 'mens': mens})
@@ -92,17 +78,20 @@ def get_whole_message_men(request, men_id):
     return render(request, 'men/one_men.html', {'title': 'message', 'messages': messages, 'men': men})
 
 
-class AddPage(CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddMen
     template_name = 'men/add_page.html'
-
+    # перенаправление для незарегистрированного пользователя
+    login_url = reverse_lazy('main')
+    # либо ошибка 403
+    raise_exception = True
     # автоматическое перенаправление после добавление страницы
     success_url = reverse_lazy('men')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'add_булочка'
-        return context
+        extra_context = self.get_user_context(title='add_page')
+        return dict(list(context.items()) + list(extra_context.items()))
 
 
 # def add_page(request):
@@ -123,14 +112,6 @@ class AddPage(CreateView):
 def contact(request):
     mens = Men.objects.all()
     return render(request, 'men/main.html', {'title': 'contact', 'mens': mens})
-
-
-# def men(request, men_id):
-#     print(men_id)
-#     print(request.GET)
-#     if request.POST:
-#         print(request.POST)
-#     return HttpResponse(f'Страница приложения men{men_id}')
 
 
 def pageNotFound(request, exception):
