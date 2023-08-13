@@ -1,12 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.aggregates import StringAgg
+from django.core.cache import cache
+from django.db.models import CharField
 from django.db.models.functions import Concat, Cast
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 
-from men.forms import AddMen
+from men.forms import AddMen, ContactForm
 from men.models import Men, Category, Message
 from men.utils import DataMixin
 
@@ -39,7 +41,13 @@ class MenPage(DataMixin, ListView):
     # метод переопределяет стандартный sql запрос модели, related делает жадный запрос, то есть сразу
     # достаются все категории, тупо join
     def get_queryset(self):
-        return Men.objects.filter(is_published=True).select_related('category')
+        mens = cache.get('mens')
+
+        if not mens:
+            mens = Men.objects.filter(is_published=True).select_related('category')
+
+        cache.set('mens', mens, 60)
+        return mens
 
 
 def categories_mens(request):
@@ -57,8 +65,29 @@ class OneMenPage(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # аналог current_user
+        # print(self.request.user)
+        #
+        # print(self.kwargs['men_id'])
+        # info_about_men = Men.objects.annotate(
+        #     messages=StringAgg(Cast('message__text', output_field=CharField()), delimiter=', ')).filter(
+        #     id=self.kwargs['men_id'])
+        # context['info_about_men'] = info_about_men
         context['title'] = 'Men'
+        print(context)
+
         return context
+
+    def get_queryset(self):
+        # аналог current_user
+        print(self.request.user)
+        print(self.kwargs['men_id'])
+
+        # переопределили главный метод, но выводит один объект, так как DetailView
+        return Men.objects.annotate(
+            messages=StringAgg(Cast('message__text', output_field=CharField()), delimiter=', ')).filter(
+            id=self.kwargs['men_id'])
 
 
 def about(request):
@@ -108,10 +137,15 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
 #
 #     return render(request, 'men/add_page.html', {'title': 'add_page', 'form': form})
 
+class Contact(FormView):
+    form_class = ContactForm
+    template_name = 'men/contact.html'
+    success_url = reverse_lazy('men')
 
-def contact(request):
-    mens = Men.objects.all()
-    return render(request, 'men/main.html', {'title': 'contact', 'mens': mens})
+    # вызывается, если форма заполнена правильно, печатает то, что есть в форме и ридеректит
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return redirect('men')
 
 
 def pageNotFound(request, exception):

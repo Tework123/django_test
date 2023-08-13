@@ -2,10 +2,15 @@
 {% block content %}
 
 <h2>{{ men }}</h2>
+<h2>{{ men.messages }}</h2>
+
 <h3>My messages(i dodik):</h3>
-{% for i in messages %}
-<p>{{i}}</p>
+{% for i in info_about_men %}
+<p>{{i.title}}</p>
+<p>{{i.messages}}</p>
+
 {% endfor %}
+
 
 {% if men.photo %}
 <p><img src="{{men.photo.url}}"></p>

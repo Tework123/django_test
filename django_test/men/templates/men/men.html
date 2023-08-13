@@ -5,6 +5,8 @@
 <p><a href="{% url 'add_page' %}">add_page</a></p>
 <p><a href="{% url 'about' %}">about</a></p>
 <p><a href="{% url 'message' %}">message</a></p>
+<p><a href="{% url 'contact' %}">contact</a></p>
+
 <h3>Количество челов по категориям:</h3>
 {% for i in count_mens_from_category %}
 <p>{{i.name}}: {{i.count_mens}}</p>
@@ -13,7 +15,7 @@
 
 
 {% for i in object_list %}
-<p><a href="{% url 'get_whole_message_men' i.pk %}">{{ i }}</a></p>
+<p><a href="{% url 'one_men' i.pk %}">{{ i }}</a></p>
 <p>{{i.category }}</p>
 {% endfor %}
 

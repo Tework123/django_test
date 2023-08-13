@@ -1,3 +1,4 @@
+from captcha.fields import CaptchaField
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -28,3 +29,10 @@ class AddMen(forms.ModelForm):
         if len(title) > 100:
             raise ValidationError('Начальника, длина далека')
         return title
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(label='имя', max_length=100)
+    email = forms.EmailField(label='email')
+    content = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10}))
+    captcha = CaptchaField()
